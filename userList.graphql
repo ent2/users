@@ -1,0 +1,51 @@
+query SELECT_FOLLOWINGS($user: String, $pageParam: PageParam) {
+    followings(user: $user, pageParam: $pageParam) {
+      list {
+        follow {
+          id
+          username
+          nickname
+          profileImage {
+            id
+            name
+            label {
+              ko
+              en
+              ja
+              vn
+              __typename
+            }
+            filename
+            imageType
+            dimension {
+              width
+              height
+              __typename
+            }
+            trimmed {
+              filename
+              width
+              height
+              __typename
+            }
+            __typename
+          }
+          status {
+            following
+            follower
+            __typename
+          }
+          isFollow
+          projects {
+            id
+            thumb
+            name
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+  }
