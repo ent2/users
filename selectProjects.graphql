@@ -26,36 +26,28 @@ query SELECT_PROJECTS(
   ) {
     total
     list {
-      id
-      name
       user {
         id
         username
         nickname
+        description
         profileImage {
           id
           filename
           imageType
         }
+        role
+        status {
+          project
+          community {
+            qna
+            tips
+            free
+          }
+          following
+          follower
+        }
       }
-      thumb
-      isopen
-      isPracticalCourse
-      category
-      categoryCode
-      created
-      updated
-      special
-      isForLecture
-      isForStudy
-      isForSubmit
-      hashId
-      complexity
-      staffPicked
-      ranked
-      visit
-      likeCnt
-      comment
     }
     last
     searchAfter

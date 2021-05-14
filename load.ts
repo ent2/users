@@ -38,5 +38,5 @@ const result = await q(
 )
 
 console.log(
-    result
+    result.data.projectList.list[0]
 )
