@@ -1,32 +1,42 @@
 async function q(
     op: string,
     queryPath: `${string}.graphql`,
-    variables: Record<string, string | number>,
+    variables: Record<string, any>,
 ) {
-    return JSON.parse(
-        await fetch(
-            "https://playentry.org/graphql",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    operationName: op,
-                    query: await Deno.readTextFile(queryPath),
-                    variables
-                }),
-                headers: {
-                    "Content-Type": "application/json"
-                }
+    return await fetch(
+        "https://playentry.org/graphql",
+        {
+            method: "POST",
+            body: JSON.stringify({
+                operationName: op,
+                query: await Deno.readTextFile(queryPath),
+                variables
+            }),
+            headers: {
+                "Content-Type": "application/json"
             }
-        ).then(res => res.text())
-    )
+        }
+    ).then(res => res.json())
 }
 
+const result = await q(
+    "SELECT_PROJECTS", 
+    "./selectProjects.graphql", 
+    {
+        cacheKey: "project-popular",
+        pageParam: {
+            display: 8,
+            order: 1,
+            sort: "created",
+            start: 0,
+        },
+        queryTitleOnly: false,
+        ranked: true,
+        searchAfter: [],
+        searchType: "page",
+    }
+)
+
 console.log(
-    await q(
-        "SELECT_FOLLOWINGS", 
-        "./userList.graphql", 
-        {
-            user: "573fa113b006225f746e3d4b"
-        }
-    )
+    result
 )

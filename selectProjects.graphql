@@ -1,0 +1,63 @@
+query SELECT_PROJECTS(
+  $query: String
+  $categoryCode: String
+  $staffPicked: Boolean
+  $ranked: Boolean
+  $parent: String
+  $pageParam: PageParam
+  $term: String
+  $queryTitleOnly: Boolean
+  $searchAfter: JSON
+  $searchType: String
+  $cacheKey: String
+) {
+  projectList(
+    query: $query
+    categoryCode: $categoryCode
+    staffPicked: $staffPicked
+    ranked: $ranked
+    parent: $parent
+    pageParam: $pageParam
+    term: $term
+    queryTitleOnly: $queryTitleOnly
+    searchAfter: $searchAfter
+    searchType: $searchType
+    cacheKey: $cacheKey
+  ) {
+    total
+    list {
+      id
+      name
+      user {
+        id
+        username
+        nickname
+        profileImage {
+          id
+          filename
+          imageType
+        }
+      }
+      thumb
+      isopen
+      isPracticalCourse
+      category
+      categoryCode
+      created
+      updated
+      special
+      isForLecture
+      isForStudy
+      isForSubmit
+      hashId
+      complexity
+      staffPicked
+      ranked
+      visit
+      likeCnt
+      comment
+    }
+    last
+    searchAfter
+  }
+}
