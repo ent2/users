@@ -4,6 +4,10 @@ query SELECT_FOLLOWINGS($user: String, $pageParam: PageParam) {
       follow {
         id
         username
+        status {
+          following
+          follower
+        }
       }
     }
   }

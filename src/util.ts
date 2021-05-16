@@ -22,8 +22,17 @@ async function q(
 interface UserI {
     id: string
     username?: string
+
     followings?: User[]
     followers?: User[]
+
+    following?: number
+    follower?: number
+}
+
+function infoSimplize(info: UserI & {status: {following: number, follower: number}}): UserI {
+    let newInfo = {...info, ...info.status}
+    return newInfo
 }
 
 class User implements UserI {
@@ -31,12 +40,16 @@ class User implements UserI {
     username
     followings
     followers
+    following
+    follower
 
     constructor(info: UserI) {
         this.id = info.id
         this.username = info.username
         this.followings = info.followings
         this.followers = info.followers
+        this.following = info.following
+        this.follower = info.follower
     }
 
     async getFollowings(n: number = 1): Promise<User[]> {
@@ -53,7 +66,7 @@ class User implements UserI {
                 user: this.id,
             }
         )
-        return this.followings = result.data.followings.list.map((x: any) => new User(x.follow))
+        return this.followings = result.data.followings.list.map((x: any) => x.follow?.id ? new User(infoSimplize(x.follow)) : ghost)
     }
     async getFollowers(n: number = 1): Promise<User[]> {
         const result = await q(
@@ -69,15 +82,16 @@ class User implements UserI {
                 user: this.id,
             }
         )
-        return this.followers = result.data.followers.list.map((x: any) => new User(x.user))
+        return this.followers = result.data.followers.list.map((x: any) => x.user?.id ? new User(infoSimplize(x.user)) : ghost)
     }
 }
+const ghost = new User({id: "0"})
 
 const user = new User({id: ""})
 
 await user.getFollowers(20)
-//await Promise.all((await user.getFollowers(20)).map(async x => await x.getFollowings()))
+//await Promise.all(user.followers!.map(async x => await x.getFollowings(99999)))
 
 console.log(
-    user.followers
+    JSON.stringify(user.followers?.filter(x => x.following! > 1000).map(({id, username}) => ({id, username})))
 )
