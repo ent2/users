@@ -1,5 +1,3 @@
-type Users = {id: string, username: string}[]
-
 async function q(
     op: string,
     queryPath: `${string}.graphql`,
@@ -21,41 +19,65 @@ async function q(
     ).then(res => res.json())
 }
 
-async function getFollowings(user: string, n: number = 1): Promise<Users> {
-    const result = await q(
-        "SELECT_FOLLOWINGS", 
-        "./query/selectFollowings.graphql", 
-        {
-            pageParam: {
-                display: n,
-                order: 1,
-                sort: "created",
-                start: 0,
-            },
-            user,
-        }
-    )
-    return result.data.followings.list.map((x: any) => x.follow)
-}
-async function getFollowers(user: string, n: number = 1): Promise<Users> {
-    const result = await q(
-        "SELECT_FOLLOWERS", 
-        "./query/selectFollowers.graphql", 
-        {
-            pageParam: {
-                display: n,
-                order: 1,
-                sort: "created",
-                start: 0,
-            },
-            user,
-        }
-    )
-    return result.data.followers.list.map((x: any) => x.user)
+interface UserI {
+    id: string
+    username?: string
+    followings?: User[]
+    followers?: User[]
 }
 
-const result = await getFollowers("", 50)
+class User implements UserI {
+    id
+    username
+    followings
+    followers
+
+    constructor(info: UserI) {
+        this.id = info.id
+        this.username = info.username
+        this.followings = info.followings
+        this.followers = info.followers
+    }
+
+    async getFollowings(n: number = 1): Promise<User[]> {
+        const result = await q(
+            "SELECT_FOLLOWINGS", 
+            "./query/selectFollowings.graphql", 
+            {
+                pageParam: {
+                    display: n,
+                    order: 1,
+                    sort: "created",
+                    start: 0,
+                },
+                user: this.id,
+            }
+        )
+        return this.followings = result.data.followings.list.map((x: any) => new User(x.follow))
+    }
+    async getFollowers(n: number = 1): Promise<User[]> {
+        const result = await q(
+            "SELECT_FOLLOWERS", 
+            "./query/selectFollowers.graphql", 
+            {
+                pageParam: {
+                    display: n,
+                    order: 1,
+                    sort: "created",
+                    start: 0,
+                },
+                user: this.id,
+            }
+        )
+        return this.followers = result.data.followers.list.map((x: any) => new User(x.user))
+    }
+}
+
+const user = new User({id: ""})
+
+await user.getFollowers(20)
+//await Promise.all((await user.getFollowers(20)).map(async x => await x.getFollowings()))
 
 console.log(
-    result
+    user.followers
 )
