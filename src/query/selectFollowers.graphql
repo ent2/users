@@ -1,0 +1,10 @@
+query SELECT_FOLLOWERS($user: String, $pageParam: PageParam) {
+  followers(user: $user, pageParam: $pageParam) {
+    list {
+      user {
+        id
+        username
+      }
+    }
+  }
+}
