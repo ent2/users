@@ -86,12 +86,3 @@ class User implements UserI {
     }
 }
 const ghost = new User({id: "0"})
-
-const user = new User({id: ""})
-
-await user.getFollowers(20)
-//await Promise.all(user.followers!.map(async x => await x.getFollowings(99999)))
-
-console.log(
-    JSON.stringify(user.followers?.filter(x => x.following! > 1000).map(({id, username}) => ({id, username})))
-)
